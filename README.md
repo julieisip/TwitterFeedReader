@@ -15,10 +15,15 @@ tweet.
 The following details should be displayed in a pleasing format for each tweet:
 
 ● User name
+
 ● User screen name (@screen_name)
+
 ● User profile image
+
 ● Tweet content (including images)
+
 ● How many times the message was retweeted
+
 ● Tweet date 
 
 
@@ -32,19 +37,27 @@ This produces a  JSON  response
 i.e.
 
 https://twitter-feed-reader.herokuapp.com/reader
+[
 
+	{
+		"username":"Salesforce",
 
-[  
-   {  
-      "username":"Salesforce",
-      "userScreenName":"salesforce",
-      "userProfileImage":"http://pbs.twimg.com/profile_images/716283264881700865/voT_NePC_normal.jpg",
-      "content":"RT @Benioff: This weekend as I think of Martin Luther King Jr. I am reminded that only through Love and Forgiveness can we end the division…",
-      "retweetCount":307,
-      "media":null,
-      "date":"Mon Jan 15 19:07:26 +0000 2018"
-   },
-   ]
+		"userScreenName":"salesforce",
+
+		"userProfileImage":"http://pbs.twimg.com/profile_images/716283264881700865/voT_NePC_normal.jpg",
+
+		"content":"@RTouchPoints Retail Touchpoints—want to make 2018 your most successful one yet? We want to help - stop by booth 41… https://t.co/7GuW6zCGDU",
+
+		"retweetCount":0,
+
+		"media":null,
+
+		"date":"Sun Jan 14 05:30:07 +0000 2018"
+
+	}
+
+]
+	
 
 
 The Application UI is implement using backbone.js for data binding, underscore.js for templating, and twitter Bootstrap
