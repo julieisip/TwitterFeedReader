@@ -16,19 +16,21 @@ import com.twitter.feed.twitter_pojo.TwitterResponse;
 @Controller
 public class TwitterFeedController {
 
-	private static final String CONSUMER_KEY = "bAhSf3MFyuZXP8tQxsjOJVozV";
-	private static final String CONSUMER_KEY_SECRET = "OmnSQOZ1whcwmj0T55VUIEXYV7hdTxwyvEyutmLddlVcvaMY8A";
-	private static final String ACCESS_TOKEN = "1254365198-sYlQwrF8GdGfIhEgDBUyo7HO4OzaF5J7VHOTN26";
-	private static final String ACCESS_SECRET = "ylX6iUx4EmLcRX0KvyRGgNC57lkv6MxDaI5bMOqMKK3Td";
-
+	/*
+	 * This returns a JSON List of twitter feed and sends to response body 
+	 * 
+	 * */
 	@RequestMapping(value = "/reader", method = RequestMethod.GET)
 	public @ResponseBody List<TwitterFeed> twitterFeedReader() throws Exception {
-		ModelAndView mav = new ModelAndView("reader");
-		TwitterFeedProvider feed = new TwitterFeedProvider();
-		feed.getTwitterFeed();
-		mav.addObject("Feed", feed.getTwitterFeed());
+		
+		//create feedReader object
+		TwitterFeedProvider feedReader = new TwitterFeedProvider();
+		
+		//Retrieve list of twitter feed
+		 List<TwitterFeed> feeds = feedReader.getTwitterFeedModel();
+		
 	
-		return feed.getTwitterFeed(); 
+		return feeds; 
 
 	}
 

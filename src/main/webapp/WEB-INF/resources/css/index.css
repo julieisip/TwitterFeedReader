@@ -1,0 +1,35 @@
+#feed-container {
+	vertical-align: middle;
+	margin: auto;
+	max-width: 1000px;
+}
+
+.feed-list__item {
+	overflow: auto;
+}
+
+.feed-list__item span.label-info {
+	background-color: steelblue;
+}
+
+.feed-list__item span.badge {
+	background-color: lightslategrey;
+}
+
+.feed-list__item__content__image {
+	max-height: 300px;
+	max-width: 100%;
+	vertical-align: middle;
+}
+
+.feed-list__item:nth-child(even) {
+	background-color: cyan !important;
+}
+
+.feed-list__item:nth-child(odd) {
+	background-color: lavender !important;
+}
+
+.pageheader {
+	overflow: auto;
+}

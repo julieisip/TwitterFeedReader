@@ -1,6 +1,5 @@
 package com.twitter.feed.controller;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,9 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.twitter.feed.twitter_pojo.Auth;
 import com.twitter.feed.twitter_pojo.Media;
@@ -23,13 +20,50 @@ import com.twitter.feed.twitter_pojo.TwitterResponse;
 
 public class TwitterFeedProvider {
 
-	private String ConsumerKey;
-	private String ConsumerSecret;
+	public List<TwitterFeed> getTwitterFeedModel() throws Exception {
 
-	public List<TwitterFeed> getTwitterFeed() throws Exception {
+		List<TwitterFeed> twitterFeeds = new ArrayList<TwitterFeed>();
+
+		// call to method to gett the twitter feed
+		List<TwitterResponse> feeds = getTwitterResponse();
+
+		// map the twitterResponse object to TwitterFeed Model
+		for (TwitterResponse feed : feeds) {
+
+			TwitterFeed twitFeed = new TwitterFeed();
+
+			twitFeed.setUsername(feed.getUser().getName());
+			twitFeed.setContent(feed.getText());
+			twitFeed.setRetweetCount(feed.getRetweet_count());
+			twitFeed.setUserProfileImage(feed.getUser().getProfile_image_url());
+			twitFeed.setUserScreenName(feed.getUser().getScreen_name());
+			List<Media> media = feed.getEntities().getMedia();
+			if (media != null) {
+
+				twitFeed.setMedia(media.get(0).getMedia_url());
+			}
+			twitFeed.setDate(feed.getCreated_at());
+
+			twitterFeeds.add(twitFeed);
+
+		}
+
+		return twitterFeeds;
+
+	}
+
+	/*
+	 * Twitter API client calls twitter api and maps to TwitterResponse Object
+	 * 
+	 */
+	private List<TwitterResponse> getTwitterResponse() throws Exception {
 
 		String twitterFeed = null;
+
+		// Get Request to twitter api to get 10 latest feed from salesforce
+		// timeline
 		try {
+
 			UriComponentsBuilder url = UriComponentsBuilder
 					.fromHttpUrl("https://api.twitter.com/1.1/statuses/user_timeline.json")
 					.queryParam("screen_name", "salesforce").queryParam("count", "10");
@@ -57,40 +91,24 @@ public class TwitterFeedProvider {
 
 			throw new Exception("twitter unreachable");
 		}
-
+		System.out.println("call twitter api");
+		// Maps response body to List of TwitterResponse
 		ObjectMapper mapper = new ObjectMapper();
 
 		List<TwitterResponse> feeds = mapper.readValue(twitterFeed, new TypeReference<List<TwitterResponse>>() {
 		});
 
-		List<TwitterFeed> twitterFeeds = new ArrayList<TwitterFeed>();
-
-		for (TwitterResponse feed : feeds) {
-
-			TwitterFeed twitFeed = new TwitterFeed();
-
-			twitFeed.setUsername(feed.getUser().getName());
-			twitFeed.setContent(feed.getText());
-			twitFeed.setRetweetCount(feed.getRetweet_count());
-			twitFeed.setUserProfileImage(feed.getUser().getProfile_image_url());
-			twitFeed.setUserScreenName(feed.getUser().getScreen_name());
-			List<Media> media = feed.getEntities().getMedia();
-			if (media != null) {
-
-				twitFeed.setMedia(media.get(0).getMedia_url());
-			}
-			
-			twitterFeeds.add(twitFeed);
-
-		}
-
-		return twitterFeeds;
+		return feeds;
 	}
 
+	/*
+	 * Generate Bearer Token Call twitter api to generate Bearer
+	 */
 	private String getAuthentication() throws Exception {
 
 		String auth = null;
 
+		// Post Request to twitter api generate oauth token
 		try {
 			UriComponentsBuilder url = UriComponentsBuilder.fromHttpUrl("https://api.twitter.com/oauth2/token");
 
@@ -119,28 +137,13 @@ public class TwitterFeedProvider {
 			throw new Exception("twitter unreachable");
 		}
 
+		// Maps response body to Auth Object
 		ObjectMapper mapper = new ObjectMapper();
 
 		Auth token = mapper.readValue(auth, Auth.class);
 
 		return token.getAccess_token();
 
-	}
-
-	public String getConsumerKey() {
-		return ConsumerKey;
-	}
-
-	public void setConsumerKey(String consumerKey) {
-		ConsumerKey = consumerKey;
-	}
-
-	public String getConsumerSecret() {
-		return ConsumerSecret;
-	}
-
-	public void setConsumerSecret(String consumerSecret) {
-		ConsumerSecret = consumerSecret;
 	}
 
 }
