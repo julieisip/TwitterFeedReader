@@ -1,9 +1,9 @@
 $(function() {
 
 	// model get data from java rest application /reader endpoint
-	var Feed = Backbone.Model.extend({
+	var Feed = Backbone.Collection.extend({
 
-		urlRoot : "reader",
+		url : "reader",
 
 		initialize : function() {
 			this.bind("reset", function(model, options) {
@@ -13,33 +13,13 @@ $(function() {
 			});
 		},
 		search : function(search) {
-
-			// if no input return all object
-			if (search == "") {
+			if (search == "")
 				return this;
-			}
 
-			// search in content object remove object that does not contain
-			// string
-			var pattern = new RegExp(search, 'gi');
-			var list = new Array();
-
-			for (i in this.attributes) {
-				var model = this.attributes[i];
-
-				console.log(this.attributes[i].content);
-				console.log(pattern.test(model.content));
-
-				if (pattern.test(model.content)) {
-
-					list.push(model);
-				}
-
-			}
-			// assign new list of feed to attribute object of model
-			this.attributes = list;
-
-			return this;
+			var pattern = new RegExp(search, "gi");
+			return _(this.filter(function(data) {
+				return pattern.test(data.get("content"));
+			}));
 		}
 
 	});
@@ -68,7 +48,6 @@ $(function() {
 		});
 
 	}, 60000);
-	
 
 	var TableView = Backbone.View.extend({
 
@@ -78,34 +57,55 @@ $(function() {
 				_.bindAll(this, 'search');
 				this.remove();
 				this.unbind();
-	
 
 			}
 		},
 		el : "#feed-container",
 		template : _.template($("#feed-template").html()),
-		model : feed,
+		collection : feed,
 		initialize : function() {
+			this.template = _.template($("#feed-template").html());
+			this.collection.on("add", this.render, this);
+			// this.collection.bind("reset", this.render, this);
+			// this.collection.on("reset",this.render, this);
 
-			this.model.on("change", this.render, this);
-			this.model.on("keyup", this.search);
-			this.model.on("reset", this.render, this);
+			// this.model.on("reset", this.render, this);
 		},
 		render : function(data) {
 
 			var feed;
 			$("#feed-list").html("");
 
-			for (feed in this.model.attributes) {
+			this.collection.each(function(feed) {
 
 				var view = new FeedItemView({
-					model : this.model.attributes[feed],
+					model : feed,
+					collection : this.collection
 
 				});
 
 				$("#feed-list").append(view.render().el);
 
-			}
+			});
+			return this;
+
+		},
+		renderList : function(data) {
+
+			var feed;
+			$("#feed-list").html("");
+
+			data.each(function(feed) {
+
+				var view = new FeedItemView({
+					model : feed,
+					collection : this.collection
+
+				});
+
+				$("#feed-list").append(view.render().el);
+
+			});
 			return this;
 
 		},
@@ -113,7 +113,7 @@ $(function() {
 
 			var query = $('#searchFeed').val();
 			console.log(query);
-			this.render(this.model.search(query));
+			this.renderList(this.collection.search(query));
 		}
 
 	});
@@ -122,7 +122,7 @@ $(function() {
 
 		events : {},
 		render : function(data) {
-			var template = this.template(this.model);
+			var template = this.template(this.model.attributes);
 			$(this.el).html(template);
 			return this;
 		},
@@ -132,5 +132,7 @@ $(function() {
 	});
 
 	var tableview = new TableView();
+
+	Backbone.history.start();
 
 });
