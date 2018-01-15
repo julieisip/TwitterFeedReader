@@ -56,8 +56,7 @@ $(function() {
 		}
 	});
 
-	// reload fetch every minute
-	setTimeout(function() {
+	setInterval(function() {
 		feed.fetch({
 			success : function(response, xhr) {
 				console.log("Inside success");
@@ -69,15 +68,17 @@ $(function() {
 		});
 
 	}, 6000);
+	
 
 	var TableView = Backbone.View.extend({
 
 		events : {
-			"keyup input.searchFeed" : "search",
+			"keyup #searchFeed" : "search",
 			initialize : function() {
 				_.bindAll(this, 'search');
 				this.remove();
 				this.unbind();
+	
 
 			}
 		},
@@ -88,7 +89,7 @@ $(function() {
 
 			this.model.on("change", this.render, this);
 			this.model.on("keyup", this.search);
-			this.model.on("reset", this.render, this);
+			//this.model.on("reset", this.render, this);
 		},
 		render : function(data) {
 
@@ -105,12 +106,13 @@ $(function() {
 				$("#feed-list").append(view.render().el);
 
 			}
+			return this;
 
 		},
 		search : function(event) {
 
-			var query = $('input.searchFeed').val();
-
+			var query = $('#searchFeed').val();
+			console.log(query);
 			this.render(this.model.search(query));
 		}
 

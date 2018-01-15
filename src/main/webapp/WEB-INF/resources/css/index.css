@@ -30,6 +30,6 @@
 	background-color: lavender !important;
 }
 
-.pageheader {
-	overflow: auto;
+.form-right-align {
+	vertical-align: right;
 }
