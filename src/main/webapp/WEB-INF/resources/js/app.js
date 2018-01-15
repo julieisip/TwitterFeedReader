@@ -67,7 +67,7 @@ $(function() {
 			}
 		});
 
-	}, 6000);
+	}, 60000);
 	
 
 	var TableView = Backbone.View.extend({
@@ -89,7 +89,7 @@ $(function() {
 
 			this.model.on("change", this.render, this);
 			this.model.on("keyup", this.search);
-			//this.model.on("reset", this.render, this);
+			this.model.on("reset", this.render, this);
 		},
 		render : function(data) {
 
