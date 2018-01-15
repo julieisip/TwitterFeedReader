@@ -26,6 +26,7 @@ $(function() {
 
 	var feed = new Feed();
 
+	//fetch data
 	feed.fetch({
 		success : function(response, xhr) {
 			console.log("Inside success");
@@ -36,6 +37,7 @@ $(function() {
 		}
 	});
 
+	//refresh every minute
 	setInterval(function() {
 		feed.fetch({
 			success : function(response, xhr) {
@@ -49,7 +51,9 @@ $(function() {
 
 	}, 60000);
 
-	var TableView = Backbone.View.extend({
+	
+	//feed View
+	var FeedListView = Backbone.View.extend({
 
 		events : {
 			"keyup #searchFeed" : "search",
@@ -66,10 +70,7 @@ $(function() {
 		initialize : function() {
 			this.template = _.template($("#feed-template").html());
 			this.collection.on("add", this.render, this);
-			// this.collection.bind("reset", this.render, this);
-			// this.collection.on("reset",this.render, this);
-
-			// this.model.on("reset", this.render, this);
+			
 		},
 		render : function(data) {
 
@@ -131,7 +132,7 @@ $(function() {
 		}
 	});
 
-	var tableview = new TableView();
+	var feedListView = new FeedListView();
 
 	Backbone.history.start();
 
