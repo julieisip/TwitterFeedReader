@@ -51,7 +51,6 @@ $(function() {
 
 	}, 60000);
 
-	
 	//feed View
 	var FeedListView = Backbone.View.extend({
 
@@ -70,7 +69,7 @@ $(function() {
 		initialize : function() {
 			this.template = _.template($("#feed-template").html());
 			this.collection.on("add", this.render, this);
-			
+
 		},
 		render : function(data) {
 
