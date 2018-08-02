@@ -68,5 +68,8 @@ The Application UI is implement using backbone.js for data binding, underscore.j
 this consumes the response from the Rest API and displays the response in the UI with formatting and styling.
 
 
+Web application url: https://twitter-feed-reader.herokuapp.com/
+
+
 
 
